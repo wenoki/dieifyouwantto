@@ -2,28 +2,23 @@
 
 Process.daemon
 
-require 'twitter'
 require 'tweetstream'
 
-Twitter.configure do |config|
-  config.consumer_key       = ARGV[0]
-  config.consumer_secret    = ARGV[1]
-  config.oauth_token        = ARGV[2]
-  config.oauth_token_secret = ARGV[3]
-end
-
 TweetStream.configure do |config|
-  config.consumer_key       = ARGV[0]
-  config.consumer_secret    = ARGV[1]
-  config.oauth_token        = ARGV[2]
-  config.oauth_token_secret = ARGV[3]
+  config.consumer_key       = ENV['TWITTER_CONSUMER_KEY']
+  config.consumer_secret    = ENV['TWITTER_CONSUMER_SECRET']
+  config.oauth_token        = ENV['TWITTER_ACCESS_TOKEN']
+  config.oauth_token_secret = ENV['TWITTER_ACCESS_TOKEN_SECRET']
   config.auth_method        = :oauth
 end
 
-TweetStream::Client.new.userstream do |status|
-  if /死(にたい|んでしまいたい|んでしまった方が楽です)([、。ー〜・‥…!！¥(（]|$|¥z)/ =~ status.text && !status.text.include?("RT")
-    Twitter.update("@#{status.user.screen_name} じゃあ死ねよ。", :in_reply_to_status_id => status.id)
-  elsif status.text.include?("@dieifyouwantto") && !status.text.include?("RT")
-    Twitter.update("@#{status.user.screen_name} 死ねよ。", :in_reply_to_status_id => status.id)
+yamaoka = TweetStream::Client.new
+
+yamaoka.userstream do |status|
+  next if status.retweet?
+  if /死(にたい|んでしまいたい|んでしまった方が楽です)([、。ー〜・‥…!！¥(（]|$|¥z)/ =~ status.text
+    yamaoka.update("@#{status.user.screen_name} じゃあ死ねよ。", { :in_reply_to_status_id => status.id, })
+  elsif status.text.include?("@dieifyouwantto")
+    yamaoka.update("@#{status.user.screen_name} 死ねよ。", { :in_reply_to_status_id => status.id, })
   end
 end
