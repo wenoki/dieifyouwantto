@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+Process.daemon
+
 require 'twitter'
 require 'tweetstream'
 
