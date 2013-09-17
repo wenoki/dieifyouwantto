@@ -61,10 +61,10 @@ EventMachine.run do
   stream.userstream do |status|
     log.info "status from @#{status.from_user}: #{status.text}"
     next if status.retweet?
-    if status.text.match /死(にたい|んでしまいたい|んでしまった方が楽です)([、。ー〜・‥…!！¥(（]|$|¥z)/
-      tweet = rest.update("@#{status.user.screen_name} じゃあ死ねよ。", :in_reply_to_status_id => status.id)
-    elsif status.text.include?("@dieifyouwantto")
-      tweet = rest.update("@#{status.user.screen_name} 死ねよ。", :in_reply_to_status_id => status.id)
+    if status.text.match /死(にたい|んでしまいたい|んでしまった方が楽です)([　、。ー〜・‥…!！\(（]|$|\s|\z)/
+      tweet = rest.update("@#{status.user.screen_name} じゃあ死ねよ。", in_reply_to_status_id: status.id)
+    elsif status.text.include? "@dieifyouwantto"
+      tweet = rest.update("@#{status.user.screen_name} 死ねよ。", in_reply_to_status_id: status.id)
     end
     log.info "tweeted: #{tweet.text}" if tweet
   end
