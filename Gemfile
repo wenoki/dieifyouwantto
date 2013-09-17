@@ -1,4 +1,4 @@
-source 'https://rubygems.org'
+source "https://rubygems.org"
+ruby "1.9.3"
 
-gem 'twitter'
-gem 'tweetstream'
+gem "tweetstream", "2.4.0"
